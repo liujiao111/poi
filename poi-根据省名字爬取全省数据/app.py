@@ -122,7 +122,7 @@ def getpoi_page(cityname, keywords, page):
             data = data.decode('utf-8')
     except Exception as e:
         print('请求异常')
-        getpoi_page(cityname, keywords, page)
+        return getpoi_page(cityname, keywords, page)
 
     data = json.loads(data)
 
