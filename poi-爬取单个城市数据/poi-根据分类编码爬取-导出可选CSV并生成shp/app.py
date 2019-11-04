@@ -23,7 +23,7 @@ from shp import trans_point_to_shp
 '''
 
 # TODO 1.替换为上面申请的密钥
-amap_web_key = '4188efb67360681f89110ccdb11e563b'
+amap_web_key = '密钥'
 
 # TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应编码，多个用逗号隔开
 keyword = ['190307']

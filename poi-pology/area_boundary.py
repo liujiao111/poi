@@ -7,7 +7,7 @@ import json
 
 #TODO 1
 # 高德上申请的key
-key = '4188efb67360681f89110ccdb11e563b' # 需替换为自己的
+key = '密高德钥' # 需替换为自己的
 # TODO 2 搜索的城市名(全名)
 addr_name = '广州'
 
