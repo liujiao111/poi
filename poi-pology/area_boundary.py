@@ -4,8 +4,10 @@ import urllib.request
 from urllib.parse import quote
 import json
 
+
 url = 'http://restapi.amap.com/v3/config/district?'
 def getlnglat(address, key):
+
     uri = url + 'keywords=' + quote(address) + '&key=' + key + '&subdistrict=1' + '&extensions=all'
 
     print(uri)
@@ -39,7 +41,6 @@ def getlnglat(address, key):
     print(max(lngs), min(lngs), max(lats), min(lats))
     return max(lngs), min(lngs), max(lats), min(lats)
 
-#getlnglat(addr_name)
 
 
 '''
