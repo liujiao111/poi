@@ -4,17 +4,8 @@ import urllib.request
 from urllib.parse import quote
 import json
 
-
-#TODO 1
-# 高德上申请的key
-key = '密高德钥' # 需替换为自己的
-# TODO 2 搜索的城市名(全名)
-addr_name = '广州'
-
-
 url = 'http://restapi.amap.com/v3/config/district?'
-def getlnglat(address):
-
+def getlnglat(address, key):
     uri = url + 'keywords=' + quote(address) + '&key=' + key + '&subdistrict=1' + '&extensions=all'
 
     print(uri)
@@ -48,7 +39,7 @@ def getlnglat(address):
     print(max(lngs), min(lngs), max(lats), min(lats))
     return max(lngs), min(lngs), max(lats), min(lats)
 
-getlnglat(addr_name)
+#getlnglat(addr_name)
 
 
 '''

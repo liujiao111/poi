@@ -25,7 +25,7 @@ city_code = '440100'
 type_code = '170200'
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = '密钥'
+gaode_key = '3a3ccf69cf7b5bab75a68948d8fcad4b'
 
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
@@ -178,7 +178,7 @@ def get_drids(min_lng, max_lat, max_lng, min_lat, keyword, key, pology_split_dis
 def get_data(city, keyword, coord, key):
 
     # 1. 获取城市边界的最大、最小经纬度
-    max_lng, min_lng, max_lat, min_lat = area_boundary.getlnglat(city)
+    max_lng, min_lng, max_lat, min_lat = area_boundary.getlnglat(city, key)
 
     print('当前城市：', city, "max_lng, min_lng, max_lat, min_lat：", max_lng, min_lng, max_lat, min_lat)
 
