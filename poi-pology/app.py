@@ -25,7 +25,7 @@ city_code = '440100'
 type_code = '170200'
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = '3a3ccf69cf7b5bab75a68948d8fcad4b'
+gaode_key = '密钥'
 
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
