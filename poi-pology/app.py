@@ -14,11 +14,11 @@ import requests
 
 
 ## TODO 1.划分的网格距离，0.02-0.05最佳，建议如果是数量比较多的用0.01或0.02，如餐厅，企业。数据量少的用0.05或者更大，如大学
-pology_split_distance = 2
+pology_split_distance = 3
 
 
 ## TODO 2. 城市编码，参见高德城市编码表
-city_code = '440100'
+city_code = '500000'
 
 
 ## TODO 3. POI类型编码
@@ -85,7 +85,7 @@ def write_to_excel(poilist, citycode, classfield, coord):
         adname = poilist[i]['adname']
 
         #根据adcode判断当前数据是否属于当前所需要的城市 根据城市编码前四位判断
-        if adcode[:4] != citycode[:4]:
+        if adcode[:3] != citycode[:3]:
             continue
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
@@ -121,6 +121,8 @@ def write_to_excel(poilist, citycode, classfield, coord):
     p.get_pinyin(cityname)
     path = "data/poi/" + p.get_pinyin(cityname) + "-" + p.get_pinyin(classfield) + '.xls'
     book.save(r'' + os.getcwd() + "/" + path)
+
+    print('写入成功')
     #book.save(r'C:\\Users\\hgvgh\\Desktop\\chendahua\\rest.xls')
     return path
 
