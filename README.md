@@ -1,6 +1,14 @@
 这是一个爬取互联网开放的POI数据代码集，包括高德和百度地图，可以爬取指定经纬度范围或者指定城市/省份的POI数据。
 
-## 目录介绍
+## 相关网站
+- 百度地图开放平台：http://lbsyun.baidu.com/
+- 百度地图开放平台-POI地点检索接口文档：http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-placeapi
+- 高德地图开放平台：https://lbs.amap.com/
+- 高德地图开放平台-POI地点检索接口文档：https://lbs.amap.com/api/webservice/guide/api/search
+- Uber小姐姐开发的一个超级炫酷的地图可视化平台：https://kepler.gl/   (也欢迎访问我的网站上的地址：http://www.mapboxx.cn:8080/ ，功能一样的)
+- 开放路网地图：https://www.openstreetmap.org/
+
+## 代码目录介绍
 #### baidu
 百度地图POI数据爬取
 
