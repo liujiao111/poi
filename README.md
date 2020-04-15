@@ -59,8 +59,8 @@ https://lbs.amap.com/)上申请。
 
 
 
-
-
+#### 常见问题：
+- 启动后报错："no module named xxxxx",这是因为你的Python环境里面没有相应的第三方模块，可以使用命令"pip install XXX"安装相应的模块，安装成功后重启即可，特别需要注意的是在`gaode/poi-province`中的代码需要安装`shapefile`模块，其安装命令名为`pip install pyshp`，如果仍然不懂，可以把报错信息粘贴到百度搜索。
 
 ##### 附录
 有什么优化建议或者发现问题欢迎向我提问，POI，宜出行都可以，qq：917961898
