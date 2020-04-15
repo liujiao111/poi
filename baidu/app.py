@@ -11,7 +11,7 @@ import transCoordinateSystem
 KeyWord = u"住宅区"
 
 # TODO 2 POI关键词，只支持单个
-baiduAk = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
+baiduAk = '百度密钥'
 
 
 # TODO 3 爬取区域的左下角和右上角百度地图坐标(经纬度）
