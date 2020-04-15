@@ -5,17 +5,14 @@
 
 
 from urllib.parse import quote
-from urllib import request
 import json
-import xlwt
-from xpinyin import Pinyin
 import os
 from transCoordinateSystem import gcj02_to_wgs84, gcj02_to_bd09
 import area_boundary as  area_boundary
 import city_grid as city_grid
 import time
 import collections
-
+import pandas as pd
 from requests.adapters import HTTPAdapter
 import requests
 
@@ -34,13 +31,13 @@ city_code = '810000'
 typs = ['企业']
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = ['3a3ccf69cf7b5bab75a68948d8fcad4b', '930433cddfe95996550f42235c0095cc']
+gaode_key = ['高德密钥1', '高德密钥2']
 
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
 
-###################################################################################################################
+############################################以下不需要动#######################################################################
 
 
 poi_pology_search_url = 'https://restapi.amap.com/v3/place/polygon'
@@ -89,83 +86,61 @@ def getpois(grids, keywords):
     return poilist
 
 
-# 数据写入excel
-def write_to_excel(poilist, citycode, classfield, coord):
-    # 一个Workbook对象，这就相当于创建了一个Excel文件
-    book = xlwt.Workbook(encoding='utf-8', style_compression=0)
-    sheet = book.add_sheet("sheet1", cell_overwrite_ok=True)
 
-    # 第一行(列标题)
-    sheet.write(0, 0, 'lon')
-    sheet.write(0, 1, 'lat')
-    sheet.write(0, 2, 'name')
-    sheet.write(0, 3, 'address')
-    sheet.write(0, 4, 'pname')
-    sheet.write(0, 5, 'cityname')
-    sheet.write(0, 6, 'adcode')
-    sheet.write(0, 7, 'adname')
-    sheet.write(0, 8, 'business_area')
-    sheet.write(0, 9, 'type')
-    sheet.write(0, 10, 'id')
+# 数据写入csv文件中
+def write_to_csv(poilist, citycode, classfield, coord):
+    data_csv = {}
+    lons, lats, names, addresss, pnames, citynames, business_areas, types = [], [], [], [], [], [], [], []
 
-    index = 0
-    if len(poilist) == 0:
-        return
     for i in range(len(poilist)):
         location = poilist[i]['location']
         name = poilist[i]['name']
         address = poilist[i]['address']
         pname = poilist[i]['pname']
         cityname = poilist[i]['cityname']
-        business_area =  poilist[i]['business_area']
+        business_area = poilist[i]['business_area']
         type = poilist[i]['type']
-        id = poilist[i]['id']
-        adcode = poilist[i]['adcode']
-        adname = poilist[i]['adname']
-
-        #根据adcode判断当前数据是否属于当前所需要的城市 根据城市编码前四位判断
-        if adcode[:3] != citycode[:3]:
-            continue
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
 
-
-        if(coord == "2"):
+        if (coord == 2):
             result = gcj02_to_wgs84(float(lng), float(lat))
             lng = result[0]
             lat = result[1]
-        if(coord == "3"):
+        if (coord == 3):
             result = gcj02_to_bd09(float(lng), float(lat))
             lng = result[0]
             lat = result[1]
+        lons.append(lng)
+        lats.append(lat)
+        names.append(name)
+        addresss.append(address)
+        pnames.append(pname)
+        citynames.append(cityname)
+        if business_area == []:
+            business_area = ''
+        business_areas.append(business_area)
+        types.append(type)
+    data_csv['lon'], data_csv['lat'], data_csv['name'], data_csv['address'], data_csv['pname'], \
+    data_csv['cityname'], data_csv['business_area'], data_csv['type'] = \
+        lons, lats, names, addresss, pnames, citynames, business_areas, types
 
-        # 每一行写入
-        sheet.write(index + 1, 0, lng)
-        sheet.write(index + 1, 1, lat)
-        sheet.write(index + 1, 2, name)
-        sheet.write(index + 1, 3, address)
-        sheet.write(index + 1, 4, pname)
-        sheet.write(index + 1, 5, cityname)
-        sheet.write(index + 1, 6, adcode)
-        sheet.write(index + 1, 7, adname)
-        sheet.write(index + 1, 8, business_area)
-        sheet.write(index + 1, 9, type)
-        sheet.write(index + 1, 10, id)
-
-        index = index + 1
+    df = pd.DataFrame(data_csv)
 
 
-    # 最后，将以上操作保存到指定的Excel文件中
-    p = Pinyin()
-    data_path = os.getcwd() + os.sep + "data" + os.sep + "poi" + os.sep
-    if not os.path.exists(data_path):
-        os.mkdir(data_path)
-    path = data_path + str(classfield) + '.xls'
-    book.save(r'' + path)
+    folder_name = 'poi-' + citycode + "-" + classfield
+    folder_name_full = 'data' + os.sep + folder_name + os.sep
+    if os.path.exists(folder_name_full) is False:
+        os.makedirs(folder_name_full)
+
+    file_name = 'poi-' + cityname + "-" + classfield + ".csv"
+    file_path = folder_name_full + file_name
+
+
+    df.to_csv(file_path, index=False, encoding='utf_8_sig')
 
     print('写入成功')
-    return path
-
+    return file_path
 
 # 将返回的poi数据装入集合返回
 def hand(poilist, result):
@@ -248,8 +223,8 @@ def get_data(city, keyword, coord):
         all_data.extend(one_pology_data)
 
     end_time = time.time()
-    print('全部：', str(len(grids_lib)) + '个矩形范围', '总的', str(len(all_data)), '条数据, 耗时：', str(end_time - begin_time), '正在写入EXCEL中')
-    return write_to_excel(all_data, city, keyword, coord)
+    print('全部：', str(len(grids_lib)) + '个矩形范围', '总的', str(len(all_data)), '条数据, 耗时：', str(end_time - begin_time), '正在写入CSV文件中')
+    return write_to_csv(all_data, city, keyword, coord)
 
 
 
