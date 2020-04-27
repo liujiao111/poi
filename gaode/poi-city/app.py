@@ -75,9 +75,9 @@ def getpois(cityname, type, keyword):
     total = int(resp.get('count', 0))
     poilist.extend(resp.get('pois', []))
 
-    if total > 20:
+    if total > 25:
         data = ''
-        page = math.ceil(total / 20)
+        page = math.ceil(total / 25)
         for i in range(1, page):
             req_url = '%s?key=%s&extensions=all&city=%s&types=%s&keywords=%s&citylimit=true&offset=25&page=%s&output=json' \
                       % (poi_search_url, amap_key, quote(cityname), quote(type), quote(keyword), i+1)
@@ -160,10 +160,10 @@ def write_to_xlsx(poilist, cityname, classfield):
     for i, poi in enumerate(poilist):
         row = i + 2
         name = poi['name']
-        address = poi['address']
+        address = poi['address'] if poi['address'] else ''
         pname = poi['pname']
         cityname = poi['cityname']
-        business_area = json.dumps(poi['business_area'], ensure_ascii=False)
+        business_area = json.dumps(poi['business_area'], ensure_ascii=False) if poi['business_area'] else ''
         type = poi['type']
         lng = poi['location'].split(",")[0]
         lat = poi['location'].split(",")[1]
@@ -299,7 +299,7 @@ def get_data(city, type, keyword):
             print('当前城区：' + str(area) + ', 分类：' + str(type) + ", 总的有" + str(len(pois_area)) + "条数据")
             all_pois.extend(pois_area)
     else:
-        all_pois = getpois(area, keyword)
+        all_pois = getpois(area, type, keyword)
 
     print("所有城区的数据汇总，总数为：" + str(len(all_pois)))
 
