@@ -8,21 +8,21 @@ import transCoordinateSystem
 
 
 # TODO 1 查询关键字，只支持单个
-KeyWord = u"住宅区"
+KeyWord = u"自然地物"
 
 # TODO 2 POI关键词，只支持单个
-baiduAk = '百度密钥'
+baiduAk = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
 
 
 # TODO 3 爬取区域的左下角和右上角百度地图坐标(经纬度）
 BigRect = {
     'left': {
-        'x': 114.08650422835264,
-        'y': 22.6097508735693
+        'x': 123.37775230,
+        'y': 41.73116275
     },
     'right': {
-        'x': 114.11980273738981,
-        'y': 22.803672722381442
+        'x': 123.42178345,
+        'y': 41.75479411
     }
 }
 
@@ -109,6 +109,7 @@ def main():
         location = poi['location']
         lng = location['lng']
         lat = location['lat']
+
         lngs.append(lng)
         lats.append(lat)
     data_csv['uid'] = uids
