@@ -14,12 +14,12 @@ from shp import trans_point_to_shp
     1. 数据导出格式支持CSV格式以及XLS两种格式;
     2. 支持同时采集多个城市的POI数据;
     3. 支持同时采集多个POI分类数据
-    
+
 2019.10.10:
     1. 数据导出支持CSV以及XLS两种格式;
     2. CSV格式数据会生成.shp文件，可以直接在ARCGIS中使用
-    
-    
+
+
 '''
 
 #################################################需要修改###########################################################
@@ -29,7 +29,6 @@ amap_web_key = '高德密钥'
 
 # TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应编码，多个用逗号隔开
 keyword = ['190307']
-
 
 # TODO 3.城市，多个用逗号隔开
 city = ['衡阳市']
@@ -64,6 +63,7 @@ def getpois(cityname, keywords):
         i = i + 1
     return poilist
 
+
 # 数据写入excel
 def write_to_excel(poilist, cityname, classfield):
     # 一个Workbook对象，这就相当于创建了一个Excel文件
@@ -86,16 +86,16 @@ def write_to_excel(poilist, cityname, classfield):
         address = poilist[i]['address']
         pname = poilist[i]['pname']
         cityname = poilist[i]['cityname']
-        business_area =  poilist[i]['business_area']
+        business_area = poilist[i]['business_area']
         type = poilist[i]['type']
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
 
-        if(coord == 2):
+        if (coord == 2):
             result = gcj02_to_wgs84(float(lng), float(lat))
             lng = result[0]
             lat = result[1]
-        if(coord == 3):
+        if (coord == 3):
             result = gcj02_to_bd09(float(lng), float(lat))
             lng = result[0]
             lat = result[1]
@@ -110,9 +110,9 @@ def write_to_excel(poilist, cityname, classfield):
         sheet.write(i + 1, 6, business_area)
         sheet.write(i + 1, 7, type)
 
-
     # 最后，将以上操作保存到指定的Excel文件中
     book.save(r'data' + os.sep + 'poi-' + cityname + "-" + classfield + ".xls")
+
 
 # 数据写入csv文件中
 def write_to_csv(poilist, cityname, classfield):
@@ -154,7 +154,6 @@ def write_to_csv(poilist, cityname, classfield):
 
     df = pd.DataFrame(data_csv)
 
-
     folder_name = 'poi-' + cityname + "-" + classfield
     folder_name_full = 'data' + os.sep + folder_name + os.sep
     if os.path.exists(folder_name_full) is False:
@@ -162,7 +161,6 @@ def write_to_csv(poilist, cityname, classfield):
 
     file_name = 'poi-' + cityname + "-" + classfield + ".csv"
     file_path = folder_name_full + file_name
-
 
     df.to_csv(file_path, index=False, encoding='utf_8_sig')
     return folder_name_full, file_name
@@ -243,9 +241,9 @@ def get_data(city, keyword):
             all_pois.extend(pois_area)
         print("所有城区的数据汇总，总数为：" + str(len(all_pois)))
         if data_file_format == 2:
-            #写入CSV
+            # 写入CSV
             file_folder, file_name = write_to_csv(all_pois, city, keyword)
-            #写入SHP
+            # 写入SHP
             trans_point_to_shp(file_folder, file_name, 0, 1)
             return
         return write_to_excel(all_pois, city, keyword)
@@ -281,10 +279,7 @@ def get_distrinctNoCache(code):
     return data
 
 
-
-
 if __name__ == '__main__':
-
 
     for ct in city:
         for type in keyword:
