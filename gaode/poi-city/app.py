@@ -250,7 +250,7 @@ def get_data(city, keyword):
             return
         return write_to_excel(all_pois, city, keyword)
     else:
-        pois_area = getpois(area, keyword)
+        pois_area = getpois(city, keyword)
         if data_file_format == 2:
             # 写入CSV
             file_folder, file_name = write_to_csv(all_pois, city, keyword)

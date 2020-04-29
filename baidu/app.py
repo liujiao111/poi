@@ -4,14 +4,13 @@ import json
 import time
 import os
 import pandas as pd
-import transCoordinateSystem
-
+from transCoordinateSystem import bd09_to_wgs84
 
 # TODO 1 查询关键字，只支持单个
-KeyWord = u"自然地物"
+KeyWord = u"大学"
 
 # TODO 2 POI关键词，只支持单个
-baiduAk = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
+baiduAk = '百度密钥'
 
 
 # TODO 3 爬取区域的左下角和右上角百度地图坐标(经纬度）
@@ -109,6 +108,10 @@ def main():
         location = poi['location']
         lng = location['lng']
         lat = location['lat']
+
+        result = bd09_to_wgs84(float(lng), float(lat))
+        lng = result[0]
+        lat = result[1]
 
         lngs.append(lng)
         lats.append(lat)

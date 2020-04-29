@@ -12,7 +12,7 @@ file_path = 'data/bmap-poi--park-shanghai.csv'
 
 
 #TODO 2.百度地图服务端密钥
-bmap_key = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
+bmap_key = '百度密钥'
 
 
 
