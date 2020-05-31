@@ -16,23 +16,22 @@ import pandas as pd
 from requests.adapters import HTTPAdapter
 import requests
 
+from shp import trans_point_to_shp
+
 
 #################################################需要修改###########################################################
 
 ## TODO 1.划分的网格距离，0.02-0.05最佳，建议如果是数量比较多的用0.01或0.02，如餐厅，企业。数据量少的用0.05或者更大，如大学
 pology_split_distance = 0.5
 
-
-## TODO 2. 城市编码，参见高德城市编码表
-city_code = '810000'
-
+## TODO 2. 城市编码，参见高德城市编码表，注意需要用adcode列的编码
+city_code = '150100'
 
 ## TODO 3. POI类型编码，类型名或者编码都行，具体参见《高德地图POI分类编码表.xlsx》
-typs = ['企业']
+typs = ['大学']  # ['企业', '公园', '广场', '风景名胜', '小学']
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = ['高德密钥1', '高德密钥2']
-
+gaode_key = ['292616426c4d5d268ab2a064359f7f43', '23b84bf3ce4c93c7175720d7b828530a']
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
@@ -43,6 +42,8 @@ coord = 2
 poi_pology_search_url = 'https://restapi.amap.com/v3/place/polygon'
 
 buffer_keys = collections.deque(maxlen=len(gaode_key))
+
+
 def init_queen():
     for i in range(len(gaode_key)):
         buffer_keys.append(gaode_key[i])
@@ -51,11 +52,10 @@ def init_queen():
 
 # 根据城市名称和分类关键字获取poi数据
 def getpois(grids, keywords):
-
     if buffer_keys.maxlen == 0:
         print('密钥已经用尽，程序退出！！！！！！！！！！！！！！！')
         exit(0)
-    amap_key = buffer_keys[0] #总是获取队列中的第一个密钥
+    amap_key = buffer_keys[0]  # 总是获取队列中的第一个密钥
 
     i = 1
     poilist = []
@@ -86,11 +86,14 @@ def getpois(grids, keywords):
     return poilist
 
 
-
 # 数据写入csv文件中
 def write_to_csv(poilist, citycode, classfield, coord):
     data_csv = {}
-    lons, lats, names, addresss, pnames, citynames, business_areas, types = [], [], [], [], [], [], [], []
+    lons, lats, names, addresss, pnames, citynames, business_areas, types, typecodes, ids, type_1s, type_2s, type_3s, type_4s = [], [], [], [], [], [], [], [], [], [], [], [], [], []
+
+    if len(poilist) == 0:
+        print("处理完成，当前citycode:" + str(citycode), ", classfield为：", str(classfield) + "，数据为空，，，结束.......")
+        return None, None
 
     for i in range(len(poilist)):
         location = poilist[i]['location']
@@ -100,8 +103,10 @@ def write_to_csv(poilist, citycode, classfield, coord):
         cityname = poilist[i]['cityname']
         business_area = poilist[i]['business_area']
         type = poilist[i]['type']
+        typecode = poilist[i]['typecode']
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
+        id = poilist[i]['id']
 
         if (coord == 2):
             result = gcj02_to_wgs84(float(lng), float(lat))
@@ -111,6 +116,20 @@ def write_to_csv(poilist, citycode, classfield, coord):
             result = gcj02_to_bd09(float(lng), float(lat))
             lng = result[0]
             lat = result[1]
+        type_1, type_2, type_3, type_4 = '','','',''
+        if str(type) != None and str(type) != '':
+            type_strs = type.split(';')
+            for i in range(len(type_strs)):
+                ty = type_strs[i]
+                if i == 0:
+                    type_1 = ty
+                elif i == 1:
+                    type_2 = ty
+                elif i == 2:
+                    type_3 = ty
+                elif i == 3:
+                    type_4 = ty
+
         lons.append(lng)
         lats.append(lat)
         names.append(name)
@@ -121,30 +140,33 @@ def write_to_csv(poilist, citycode, classfield, coord):
             business_area = ''
         business_areas.append(business_area)
         types.append(type)
+        typecodes.append(typecode)
+        ids.append(id)
+        type_1s.append(type_1)
+        type_2s.append(type_2)
+        type_3s.append(type_3)
+        type_4s.append(type_4)
     data_csv['lon'], data_csv['lat'], data_csv['name'], data_csv['address'], data_csv['pname'], \
-    data_csv['cityname'], data_csv['business_area'], data_csv['type'] = \
-        lons, lats, names, addresss, pnames, citynames, business_areas, types
+    data_csv['cityname'], data_csv['business_area'], data_csv['type'], data_csv['typecode'], data_csv['id'], data_csv[
+        'type1'], data_csv['type2'], data_csv['type3'], data_csv['type4'] = \
+        lons, lats, names, addresss, pnames, citynames, business_areas, types, typecodes, ids, type_1s, type_2s, type_3s, type_4s
 
     df = pd.DataFrame(data_csv)
-
 
     folder_name = 'poi-' + citycode + "-" + classfield
     folder_name_full = 'data' + os.sep + folder_name + os.sep
     if os.path.exists(folder_name_full) is False:
         os.makedirs(folder_name_full)
-
-    file_name = 'poi-' + cityname + "-" + classfield + ".csv"
+    file_name = 'poi-' + citycode + "-" + classfield + ".csv"
     file_path = folder_name_full + file_name
-
-
     df.to_csv(file_path, index=False, encoding='utf_8_sig')
-
     print('写入成功')
-    return file_path
+    return folder_name_full, file_name
+
 
 # 将返回的poi数据装入集合返回
 def hand(poilist, result):
-    #result = json.loads(result)  # 将字符串转换为json
+    # result = json.loads(result)  # 将字符串转换为json
     pois = result['pois']
     for i in range(len(pois)):
         poilist.append(pois[i])
@@ -152,7 +174,6 @@ def hand(poilist, result):
 
 # 单页获取pois
 def getpoi_page(grids, types, page, key):
-
     polygon = str(grids[0]) + "," + str(grids[1]) + "|" + str(grids[2]) + "," + str(grids[3])
     req_url = poi_pology_search_url + "?key=" + key + '&extensions=all&types=' + quote(
         types) + '&polygon=' + polygon + '&offset=25' + '&page=' + str(
@@ -163,7 +184,7 @@ def getpoi_page(grids, types, page, key):
     s.mount('http://', HTTPAdapter(max_retries=5))
     s.mount('https://', HTTPAdapter(max_retries=5))
     try:
-        data = s.get(req_url, timeout = 5)
+        data = s.get(req_url, timeout=5)
         return data.text
     except requests.exceptions.RequestException as e:
         data = s.get(req_url, timeout=5)
@@ -183,16 +204,15 @@ def get_drids(min_lng, max_lat, max_lng, min_lat, keyword, key, pology_split_dis
         data = json.loads(one_pology_data)
         print(data)
 
-        if int(data['count']) > 890:
+        while int(data['count']) > 890:
             get_drids(grid[0], grid[1], grid[2], grid[3], keyword, key, pology_split_distance / 2, all_grids)
-        else:
-            all_grids.append(grid)
+
+
         all_grids.append(grid)
     return all_grids
 
 
 def get_data(city, keyword, coord):
-
     # 1. 获取城市边界的最大、最小经纬度
     amap_key = buffer_keys[0]  # 总是获取队列中的第一个密钥
     max_lng, min_lng, max_lat, min_lat = area_boundary.getlnglat(city, amap_key)
@@ -200,7 +220,6 @@ def get_data(city, keyword, coord):
     print('当前城市：', city, "max_lng, min_lng, max_lat, min_lat：", max_lng, min_lng, max_lat, min_lat)
 
     # 2. 生成网格切片格式：
-
 
     grids_lib = city_grid.generate_grids(min_lng, max_lat, max_lng, min_lat, pology_split_distance)
 
@@ -216,16 +235,18 @@ def get_data(city, keyword, coord):
         # grid格式：[112.23, 23.23, 112.24, 23.22]
         one_pology_data = getpois(grid, keyword)
 
-
         print('===================================当前矩形范围：', grid, '总共：',
               str(len(one_pology_data)) + "条数据.............................")
 
         all_data.extend(one_pology_data)
 
     end_time = time.time()
-    print('全部：', str(len(grids_lib)) + '个矩形范围', '总的', str(len(all_data)), '条数据, 耗时：', str(end_time - begin_time), '正在写入CSV文件中')
-    return write_to_csv(all_data, city, keyword, coord)
-
+    print('全部：', str(len(grids_lib)) + '个矩形范围', '总的', str(len(all_data)), '条数据, 耗时：', str(end_time - begin_time),
+          '正在写入CSV文件中')
+    file_folder, file_name = write_to_csv(all_data, city, keyword, coord)
+    # 写入shp
+    if file_folder is not None:
+        trans_point_to_shp(file_folder, file_name, 0, 1, pology_split_distance, keyword)
 
 
 if __name__ == '__main__':
@@ -234,4 +255,3 @@ if __name__ == '__main__':
 
     for type in typs:
         get_data(city_code, type, coord)
-

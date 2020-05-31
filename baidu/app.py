@@ -7,21 +7,20 @@ import pandas as pd
 from transCoordinateSystem import bd09_to_wgs84
 
 # TODO 1 查询关键字，只支持单个
-KeyWord = u"大学"
+KeyWord = u"商场"
 
 # TODO 2 POI关键词，只支持单个
-baiduAk = '百度密钥'
-
+baiduAk = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
 
 # TODO 3 爬取区域的左下角和右上角百度地图坐标(经纬度）
 BigRect = {
     'left': {
-        'x': 123.37775230,
-        'y': 41.73116275
+        'x': 111.60623243179616,
+        'y': 40.75997629603454
     },
     'right': {
-        'x': 123.42178345,
-        'y': 41.75479411
+        'x': 111.78843155017277,
+        'y': 40.89855939714922
     }
 }
 
