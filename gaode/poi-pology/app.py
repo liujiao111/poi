@@ -31,7 +31,7 @@ city_code = '150100'
 typs = ['大学']  # ['企业', '公园', '广场', '风景名胜', '小学']
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = ['292616426c4d5d268ab2a064359f7f43', '23b84bf3ce4c93c7175720d7b828530a']
+gaode_key = ['高德密钥1', '高德密钥2']
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
@@ -96,17 +96,17 @@ def write_to_csv(poilist, citycode, classfield, coord):
         return None, None
 
     for i in range(len(poilist)):
-        location = poilist[i]['location']
-        name = poilist[i]['name']
-        address = poilist[i]['address']
-        pname = poilist[i]['pname']
-        cityname = poilist[i]['cityname']
-        business_area = poilist[i]['business_area']
-        type = poilist[i]['type']
-        typecode = poilist[i]['typecode']
+        location = poilist[i].get('location')
+        name = poilist[i].get('name')
+        address = poilist[i].get('address')
+        pname = poilist[i].get('pname')
+        cityname = poilist[i].get('cityname')
+        business_area = poilist[i].get('business_area')
+        type = poilist[i].get('type')
+        typecode = poilist[i].get('typecode')
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
-        id = poilist[i]['id']
+        id = poilist[i].get('id')
 
         if (coord == 2):
             result = gcj02_to_wgs84(float(lng), float(lat))

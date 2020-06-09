@@ -18,8 +18,6 @@ from shp import trans_point_to_shp
 2019.10.10:
     1. 数据导出支持CSV以及XLS两种格式;
     2. CSV格式数据会生成.shp文件，可以直接在ARCGIS中使用
-
-
 '''
 
 #################################################需要修改###########################################################
@@ -28,10 +26,10 @@ from shp import trans_point_to_shp
 amap_web_key = '高德密钥'
 
 # TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应编码，多个用逗号隔开
-keyword = ['190307']
+keyword = ['分类编码/关键字']
 
 # TODO 3.城市，多个用逗号隔开
-city = ['衡阳市']
+city = ['城市名']
 
 # TODO 4.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
@@ -81,13 +79,13 @@ def write_to_excel(poilist, cityname, classfield):
     sheet.write(0, 7, 'type')
 
     for i in range(len(poilist)):
-        location = poilist[i]['location']
-        name = poilist[i]['name']
-        address = poilist[i]['address']
-        pname = poilist[i]['pname']
-        cityname = poilist[i]['cityname']
-        business_area = poilist[i]['business_area']
-        type = poilist[i]['type']
+        location = poilist[i].get('location')
+        name = poilist[i].get('name')
+        address = poilist[i].get('address')
+        pname = poilist[i].get('pname')
+        cityname = poilist[i].get('cityname')
+        business_area = poilist[i].get('business_area')
+        type = poilist[i].get('type')
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
 
@@ -120,13 +118,15 @@ def write_to_csv(poilist, cityname, classfield):
     lons, lats, names, addresss, pnames, citynames, business_areas, types = [], [], [], [], [], [], [], []
 
     for i in range(len(poilist)):
-        location = poilist[i]['location']
-        name = poilist[i]['name']
-        address = poilist[i]['address']
-        pname = poilist[i]['pname']
-        cityname = poilist[i]['cityname']
-        business_area = poilist[i]['business_area']
-        type = poilist[i]['type']
+        print('===================')
+        print(poilist[i])
+        location = poilist[i].get('location')
+        name = poilist[i].get('name')
+        address = poilist[i].get('address')
+        pname = poilist[i].get('pname')
+        cityname = poilist[i].get('cityname')
+        business_area = poilist[i].get('business_area')
+        type = poilist[i].get('type')
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
 

@@ -131,7 +131,6 @@ def getpoi_page(cityname, keywords, page):
     if data['status'] == '0':  # 请求成功，但是返回数据失败
         if data['infocode'] == '10001':
             print('无效的密钥！！！！！！！！！！！！！，重新切换密钥进行爬取')
-            # TODO 重新更换密钥
             buffer_keys.remove(buffer_keys[0])
             return getpoi_page(cityname, keywords, page)
         if data['infocode'] == '10003':
@@ -214,19 +213,19 @@ def write_to_csv(poilist, provincename, classfield):
         , type_1s, type_2s, type_3s, type_4s, ids = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 
     for i in range(len(poilist)):
-        location = poilist[i]['location']
-        name = poilist[i]['name']
-        address = poilist[i]['address']
-        pname = poilist[i]['pname']
+        location = poilist[i].get('location')
+        name = poilist[i].get('name')
+        address = poilist[i].get('address')
+        pname = poilist[i].get('pname')
         #provincename = poilist[i]['provincename']
-        business_area = poilist[i]['business_area']
-        cityname = poilist[i]['cityname']
-        adname = poilist[i]['adname']
-        type = poilist[i]['type']
-        typecode = poilist[i]['typecode']
+        business_area = poilist[i].get('business_area')
+        cityname = poilist[i].get('cityname')
+        adname = poilist[i].get('adname')
+        type = poilist[i].get('type')
+        typecode = poilist[i].get('typecode')
         lng = str(location).split(",")[0]
         lat = str(location).split(",")[1]
-        id = poilist[i]['id']
+        id = poilist[i].get('id')
         type = str(type)
         type_1 = ''
         type_2 = ''
