@@ -33,5 +33,5 @@ def generate_grids(start_long,start_lat,end_long,end_lat,resolution):
 
 
 
-grids_lib = generate_grids(112.958507, 23.932988, 114.059957, 22.51436,0.1)
-print(grids_lib)
+#grids_lib = generate_grids(112.958507, 23.932988, 114.059957, 22.51436,0.1)
+#print(grids_lib)

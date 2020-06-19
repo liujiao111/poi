@@ -7,7 +7,7 @@ import pandas as pd
 from xpinyin import Pinyin
 from transCoordinateSystem import gcj02_to_wgs84, gcj02_to_bd09
 import random
-from shp import trans_point_to_shp
+#from shp import trans_point_to_shp
 
 '''
 版本更新说明：
@@ -15,12 +15,15 @@ from shp import trans_point_to_shp
     1. 数据导出格式支持CSV、shp格式以及XLS格式;
     2. 支持同时采集多个城市的POI数据;
     3. 支持同时采集多个POI分类数据
+    
+2020.06.19:
+    1.清除了poi数据写入shp文件相关操作
 '''
 
 #################################################需要修改###########################################################
 
 # TODO 1.替换为上面申请的密钥,支持多个，如果单个失效了，会自动切换密钥
-amap_web_key = ['高德密钥1', '高德密钥2']
+amap_web_key = ['高德秘钥1', '高德秘钥2']
 
 # TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应编码，多个用逗号隔开
 keyword = ['010600', '010700']
@@ -44,8 +47,6 @@ print('总的有', len(keyword), '个待爬POI')
 poi_search_url = "http://restapi.amap.com/v3/place/text"
 poi_boundary_url = "https://ditu.amap.com/detail/get/detail"
 
-poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=86e468edba1416f571f345d60a577220"
-
 
 buffer_keys = collections.deque(maxlen=len(amap_web_key))
 def init_queen():
@@ -54,7 +55,13 @@ def init_queen():
     print('当前可供使用的高德密钥：', buffer_keys)
 
 def get_districthtml(province):#province的html
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=1&extensions=all&key=86e468edba1416f571f345d60a577220"
+
+    if buffer_keys.maxlen == 0:
+        print('密钥已经用尽，程序退出！！！！！！！！！！！！！！！')
+        exit(0)
+    amap_key = buffer_keys[0] #总是获取队列中的第一个密钥
+    print('获取到的队列中的密钥：', amap_key)
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=1&extensions=all&key=" + amap_key
     req_url = url + "&keywords=" + quote(str(province))
     print(req_url)
 
@@ -145,7 +152,12 @@ def getpoi_page(cityname, keywords, page):
 
 
 def get_distrinctNoCache(city):#city的html
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=86e468edba1416f571f345d60a577220"
+    if buffer_keys.maxlen == 0:
+        print('密钥已经用尽，程序退出！！！！！！！！！！！！！！！')
+        exit(0)
+    amap_key = buffer_keys[0] #总是获取队列中的第一个密钥
+    print('获取到的队列中的密钥：', amap_key)
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=" + amap_key
     req_url = url + "&keywords=" + quote(city)
     print(req_url)
     with request.urlopen(req_url) as f:
@@ -315,7 +327,7 @@ if __name__ == '__main__':  # 函数运行的入口，直接print('hello, world'
             file_folder, file_name = write_to_csv(one_pro_type_poi_list, pro, type)
 
             # 写入shp
-            trans_point_to_shp(file_folder, file_name, 0, 1)
+            #trans_point_to_shp(file_folder, file_name, 0, 1)
                 
             #except Exception as e:
                 #print('===================================爬取失败，当前省：', pro, '分类：', type, '...........................')

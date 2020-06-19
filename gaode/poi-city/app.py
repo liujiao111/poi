@@ -5,7 +5,7 @@ import os
 import xlwt
 import pandas as pd
 from transCoordinateSystem import gcj02_to_wgs84, gcj02_to_bd09
-from shp import trans_point_to_shp
+#from shp import trans_point_to_shp
 
 '''
 版本更新说明：
@@ -18,18 +18,22 @@ from shp import trans_point_to_shp
 2019.10.10:
     1. 数据导出支持CSV以及XLS两种格式;
     2. CSV格式数据会生成.shp文件，可以直接在ARCGIS中使用
+
+2020.06.19:
+    1.清除了poi数据写入shp文件相关操作
+    2.修改为根据POI分类关键字来爬取，而不是分类编码
 '''
 
 #################################################需要修改###########################################################
 
 # TODO 1.替换为从高德开放平台上申请申请的密钥
-amap_web_key = '高德密钥'
+amap_web_key = '申请的高德web秘钥'
 
-# TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应编码，多个用逗号隔开
-keyword = ['分类编码/关键字']
+# TODO 2.分类关键字,最好对照<<高德地图POI分类关键字以及编码.xlsx>>来填写对应分类关键字(不是编码)，多个用逗号隔开
+keyword = ['大学']
 
 # TODO 3.城市，多个用逗号隔开
-city = ['城市名']
+city = ['北京']
 
 # TODO 4.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
@@ -42,8 +46,6 @@ data_file_format = 2
 
 poi_search_url = "http://restapi.amap.com/v3/place/text"
 poi_boundary_url = "https://ditu.amap.com/detail/get/detail"
-
-poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=86e468edba1416f571f345d60a577220"
 
 
 # 根据城市名称和分类关键字获取poi数据
@@ -176,10 +178,11 @@ def hand(poilist, result):
 
 # 单页获取pois
 def getpoi_page(cityname, keywords, page):
-    req_url = poi_search_url + "?key=" + amap_web_key + '&extensions=all&types=' + quote(
+    req_url = poi_search_url + "?key=" + amap_web_key + '&extensions=all&keywords=' + quote(
         keywords) + '&city=' + quote(cityname) + '&citylimit=true' + '&offset=25' + '&page=' + str(
         page) + '&output=json'
     data = ''
+    print('============请求url:' + req_url)
     with request.urlopen(req_url) as f:
         data = f.read()
         data = data.decode('utf-8')
@@ -244,7 +247,7 @@ def get_data(city, keyword):
             # 写入CSV
             file_folder, file_name = write_to_csv(all_pois, city, keyword)
             # 写入SHP
-            trans_point_to_shp(file_folder, file_name, 0, 1)
+            #trans_point_to_shp(file_folder, file_name, 0, 1)
             return
         return write_to_excel(all_pois, city, keyword)
     else:
@@ -253,7 +256,7 @@ def get_data(city, keyword):
             # 写入CSV
             file_folder, file_name = write_to_csv(all_pois, city, keyword)
             # 写入SHP
-            trans_point_to_shp(file_folder, file_name, 0, 1)
+            #trans_point_to_shp(file_folder, file_name, 0, 1)
             return
         return write_to_excel(pois_area, city, keyword)
 
@@ -266,7 +269,7 @@ def get_distrinctNoCache(code):
     :return:
     '''
 
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=86e468edba1416f571f345d60a577220"
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=" + amap_web_key
 
     req_url = url + "&keywords=" + quote(code)
 

@@ -16,8 +16,15 @@ import pandas as pd
 from requests.adapters import HTTPAdapter
 import requests
 
-from shp import trans_point_to_shp
+#from shp import trans_point_to_shp
 
+
+'''
+版本更新说明：
+2020.06.19:
+    1.清除了poi数据写入shp文件相关操作
+
+'''
 
 #################################################需要修改###########################################################
 
@@ -28,10 +35,10 @@ pology_split_distance = 0.5
 city_code = '150100'
 
 ## TODO 3. POI类型编码，类型名或者编码都行，具体参见《高德地图POI分类编码表.xlsx》
-typs = ['大学']  # ['企业', '公园', '广场', '风景名胜', '小学']
+typs = ['加油站']  # ['企业', '公园', '广场', '风景名胜', '小学']
 
 ## TODO 4. 高德开放平台密钥
-gaode_key = ['高德密钥1', '高德密钥2']
+gaode_key = ['高德秘钥1', '高德秘钥2']
 
 # TODO 5.输出数据坐标系,1为高德GCJ20坐标系，2WGS84坐标系，3百度BD09坐标系
 coord = 2
@@ -245,8 +252,8 @@ def get_data(city, keyword, coord):
           '正在写入CSV文件中')
     file_folder, file_name = write_to_csv(all_data, city, keyword, coord)
     # 写入shp
-    if file_folder is not None:
-        trans_point_to_shp(file_folder, file_name, 0, 1, pology_split_distance, keyword)
+    #if file_folder is not None:
+        #trans_point_to_shp(file_folder, file_name, 0, 1, pology_split_distance, keyword)
 
 
 if __name__ == '__main__':
