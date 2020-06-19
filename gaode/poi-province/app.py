@@ -44,7 +44,7 @@ print('总的有', len(keyword), '个待爬POI')
 poi_search_url = "http://restapi.amap.com/v3/place/text"
 poi_boundary_url = "https://ditu.amap.com/detail/get/detail"
 
-poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=4188efb67360681f89110ccdb11e563b"
+poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=86e468edba1416f571f345d60a577220"
 
 
 buffer_keys = collections.deque(maxlen=len(amap_web_key))
@@ -54,7 +54,7 @@ def init_queen():
     print('当前可供使用的高德密钥：', buffer_keys)
 
 def get_districthtml(province):#province的html
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=1&extensions=all&key=4188efb67360681f89110ccdb11e563b"
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=1&extensions=all&key=86e468edba1416f571f345d60a577220"
     req_url = url + "&keywords=" + quote(str(province))
     print(req_url)
 
@@ -145,7 +145,7 @@ def getpoi_page(cityname, keywords, page):
 
 
 def get_distrinctNoCache(city):#city的html
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=4188efb67360681f89110ccdb11e563b"
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=86e468edba1416f571f345d60a577220"
     req_url = url + "&keywords=" + quote(city)
     print(req_url)
     with request.urlopen(req_url) as f:

@@ -43,7 +43,7 @@ data_file_format = 2
 poi_search_url = "http://restapi.amap.com/v3/place/text"
 poi_boundary_url = "https://ditu.amap.com/detail/get/detail"
 
-poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=4188efb67360681f89110ccdb11e563b"
+poi_xingzheng_distrinct_url = "https://restapi.amap.com/v3/config/district?subdistrict=1&key=86e468edba1416f571f345d60a577220"
 
 
 # 根据城市名称和分类关键字获取poi数据
@@ -266,7 +266,7 @@ def get_distrinctNoCache(code):
     :return:
     '''
 
-    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=4188efb67360681f89110ccdb11e563b"
+    url = "https://restapi.amap.com/v3/config/district?subdistrict=2&extensions=all&key=86e468edba1416f571f345d60a577220"
 
     req_url = url + "&keywords=" + quote(code)
 
