@@ -7,27 +7,27 @@ import pandas as pd
 from transCoordinateSystem import bd09_to_wgs84
 
 # TODO 1 查询关键字，只支持单个
-KeyWord = u"商场"
+KeyWord = "餐饮"
 
 # TODO 2 POI关键词，只支持单个
-baiduAk = '1QkdIjutWv0jBDZEKqy9TH4O3divaRcS'
+baiduAk = '百度地图申请的密钥'
 
 # TODO 3 爬取区域的左下角和右上角百度地图坐标(经纬度）
 BigRect = {
     'left': {
-        'x': 111.60623243179616,
-        'y': 40.75997629603454
+        'x': 120.86099303837032,
+        'y': 30.6607006997429
     },
     'right': {
-        'x': 111.78843155017277,
-        'y': 40.89855939714922
+        'x': 122.12725435186897,
+        'y': 31.89735902287794
     }
 }
 
 # TODO 4 划分细分窗口的数量，横向X * 纵向Y
 WindowSize = {
-    'xNum': 2.0,
-    'yNum': 2.0
+    'xNum': 5.0,
+    'yNum': 5.0
 }
 
 
@@ -63,11 +63,9 @@ def requestBaiduApi(keyWords, smallRect, baiduAk):
                 "&scope=2" + \
                 "&page_size=20" + \
                 "&page_num=" + str(pageNum)
-            print(pageNum)
             print(URL)
             resp = requests.get(URL)
             res = json.loads(resp.text)
-            # print(resp.text.strip())
             if len(res['results']) == 0:
                 print('返回结果为0')
                 break
@@ -77,13 +75,34 @@ def requestBaiduApi(keyWords, smallRect, baiduAk):
                     file.writelines(str(r).strip() + '\n')
             pageNum += 1
             time.sleep(1)
-        except:
-            print("except")
+        except Exception as e:
+            print("爬取失败，请查看输出的错误信息：", resp.text.strip())
             break
     return pois
 
+def check_params():
+    '''
+    判断输入的经纬度范围是否正确
+    :return:
+    '''
+
+    min_lng = BigRect['left']['x']
+    max_lng = BigRect['right']['x']
+
+    min_lat = BigRect['left']['y']
+    max_lat = BigRect['right']['y']
+
+    if int(min_lng) > int(max_lng):
+        print('输入经度有误!，右上角的经度应该大于左下角的经度值')
+        exit(0)
+    if int(min_lat) > int(max_lat):
+        print('输入经度有误!，右上角的纬度应该大于左下角的纬度值')
+        exit(0)
 
 def main():
+    #检查输入参数是否正确
+    check_params()
+
     all_pois = []
     for index in range(int(WindowSize['xNum'] * WindowSize['yNum'])):
         smallRect = getSmallRect(BigRect, WindowSize, index)
