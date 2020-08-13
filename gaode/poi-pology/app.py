@@ -68,7 +68,7 @@ def getpois(grids, keywords):
     poilist = []
     while True:  # 使用while循环不断分页获取数据
         result = getpoi_page(grids, keywords, i, amap_key)
-        print(result)
+        print("当前爬取结果:", result)
         if result != None:
             result = json.loads(result)  # 将字符串转换为json
             try:
